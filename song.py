@@ -5,9 +5,9 @@ class Song:
     song_name = "null"
     song_location = "null"
 
-    def __init__(self, name):
-        self.song_name = "null"
-        self.song_location = "null"
+    def __init__(self, name, location):
+        self.song_name = name
+        self.song_location = location
 
     def set_song(self, song):
         self.song_name = song
@@ -19,14 +19,7 @@ class Song:
         pygame.mixer.music.unload()
         pygame.mixer.music.load(self.song_location)
 
-    def play_song():
-        pygame.mixer.music.play()
-
-    def pause_song():
-        pygame.mixer.music.pause()
     
-    def unpause_song():
-        pygame.mixer.music.unpause()
 
     
 
