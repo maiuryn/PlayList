@@ -28,7 +28,7 @@ class Player:
 
         # Store names into array
         for song_name in song_names:
-            self.songs.append(Song(song_name.replace(".mp3","").replace("./Songs\\",""), song_name))          
+            self.songs.append(Song(song_name.replace(".mp3","").replace("./songs\\",""), song_name))          
             
         # Put songs into the queue in order
         # for song in self.songs:
