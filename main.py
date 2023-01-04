@@ -20,15 +20,17 @@ class Player:
         self.display = Display()
         self.index = 0
         self.current_song = Song("Press Space to Play", "./")
+        self.volume = volume
+        pygame.mixer.music.set_volume(self.volume)
 
         pygame.mixer.music.set_endevent(END_SONG)
 
         # Update Song List
-        song_names = glob.glob(songs_folder)
+        song_directories = glob.glob(songs_folder)
 
         # Store names into array
-        for song_name in song_names:
-            self.songs.append(Song(song_name.replace(".mp3","").replace("./songs\\",""), song_name))          
+        for song_name in song_directories:
+            self.songs.append(Song(song_name.replace(".mp3","").replace("./Songs\\",""), song_name))          
             
         # Put songs into the queue in order
         # for song in self.songs:
@@ -63,6 +65,17 @@ class Player:
                 if event.key == pygame.K_LEFT:
                     self.index = (self.index - 1) % (len(self.songs))
                     self.play_song()
+                
+                if event.key == pygame.K_UP:
+                    self.volume = self.volume + 5
+                    if self.volume > 100:
+                        self.volume = 100
+                    pygame.mixer.music.set_volume(self.volume)
+                if event.key == pygame.K_DOWN:
+                    self.volume = self.volume - 5
+                    if self.volume < 0:
+                        self.volume = 0
+                    pygame.mixer.music.set_volume(self.volume)
             
             # Play the next song
             if event.type == END_SONG:
@@ -78,8 +91,9 @@ class Player:
 
     def run(self):
         while True:
+            # pygame.mixer.music.set_volume(self.volume)
             self.check_events()
-            self.display.update(0, self.current_song.song_name)  
+            self.display.update(0, self.current_song.song_name, self.volume)  
             self.display.draw()
             pygame.display.update()
 

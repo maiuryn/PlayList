@@ -17,13 +17,15 @@ class Display:
 
         self.song_progress = 0
         self.current_song_name = ""
+        self.volume = volume
         
     def draw(self):
         # Clear the screen
         self.screen.fill(pygame.Color("black"))
 
-        # Song progress
-        pygame.draw.rect(self.screen, (0, 255, 0), pygame.Rect(0, 0, self.song_progress*screen_width, 20))
+        # Song volume
+        pygame.draw.rect(self.screen, (50, 50, 50), pygame.Rect(0, self.screen_height - 20, self.screen_width, 20))
+        pygame.draw.rect(self.screen, (200, 200, 200), pygame.Rect(0, self.screen_height - 20, (self.volume/100)*self.screen_width, 20))
 
         # Display current song name to screen
         current_song = self.font.render(self.current_song_name, False, (255, 255, 255, 255))   
@@ -31,9 +33,9 @@ class Display:
         self.screen.blit(current_song, text_rect)
 
 
-    def update(self, song_progress, current_song):
+    def update(self, song_progress, current_song, volume):
         self.screen_width, self.screen_height = pygame.display.get_window_size()
-
+        self.volume = volume
         pygame.mixer.music.set_volume(volume/100)
         
         self.current_song_name = current_song
