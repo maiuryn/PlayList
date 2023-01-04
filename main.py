@@ -1,6 +1,7 @@
 import pygame
 import sys
 import glob
+from mutagen.mp3 import MP3
 from queue import Queue
 from settings import *
 from song import *
@@ -9,9 +10,6 @@ from display import *
 END_SONG = pygame.USEREVENT + 1
 
 class Player:
-    # song_names = []
-    # song_queue = Queue()
-
     def __init__(self):
         pygame.init()
 
@@ -19,7 +17,7 @@ class Player:
         self.songs = []
         self.display = Display()
         self.index = 0
-        self.current_song = Song("Press Space to Play", "./")
+        self.current_song = Song("Press Space to Play", "./", -1)
         self.volume = volume
         pygame.mixer.music.set_volume(self.volume)
 
@@ -29,12 +27,18 @@ class Player:
         song_directories = glob.glob(songs_folder)
 
         # Store names into array
-        for song_name in song_directories:
-            self.songs.append(Song(song_name.replace(".mp3","").replace("./Songs\\",""), song_name))          
+        for song_directory in song_directories:
+            self.songs.append(Song(song_directory.replace(".mp3","").replace("./songs\\",""), song_directory, int(MP3(song_directory).info.length)))          
             
         # Put songs into the queue in order
         # for song in self.songs:
         #     self.song_queue.put(song)    
+    
+    # def load_songs(self, directory):
+    #     self.songs.clear()
+    #     song_directories = glob.glob(directory)
+    #     for song_directory in song_directories:
+    #         self.songs.append(Song(song_directory.replace(".mp3","").replace(f"{directory}",""), song_directory, int(MP3(song_directory).info.length)))
 
     def play_song(self):
         self.playing = True
@@ -48,6 +52,13 @@ class Player:
             if event.type == pygame.QUIT or (event.type == pygame.K_ESCAPE):
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.VIDEORESIZE:
+                width, height = event.size
+                if width < 426:
+                    width = 426
+                if height < 240:
+                    height = 240
+                self.display.screen = pygame.display.set_mode((width,height), pygame.RESIZABLE)
             
             # Keyboard Controls
             if event.type == pygame.KEYDOWN:
@@ -70,16 +81,15 @@ class Player:
                     self.volume = self.volume + 5
                     if self.volume > 100:
                         self.volume = 100
-                    pygame.mixer.music.set_volume(self.volume)
                 if event.key == pygame.K_DOWN:
                     self.volume = self.volume - 5
                     if self.volume < 0:
                         self.volume = 0
-                    pygame.mixer.music.set_volume(self.volume)
             
             # Play the next song
             if event.type == END_SONG:
                 self.playing = False
+                self.index = (self.index + 1) % (len(self.songs))
                 self.play_song()              
 
     def pause_song(self):
@@ -91,9 +101,9 @@ class Player:
 
     def run(self):
         while True:
-            # pygame.mixer.music.set_volume(self.volume)
+            pygame.mixer.music.set_volume(self.volume/100)
             self.check_events()
-            self.display.update(0, self.current_song.song_name, self.volume)  
+            self.display.update(pygame.mixer.music.get_pos()//1000, self.current_song, self.volume)  
             self.display.draw()
             pygame.display.update()
 

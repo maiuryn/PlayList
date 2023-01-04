@@ -5,9 +5,10 @@ class Song:
     song_name = "null"
     song_location = "null"
 
-    def __init__(self, name, location):
+    def __init__(self, name, location, length):
         self.song_name = name
         self.song_location = location
+        self.song_length = length
 
     def set_song(self, song):
         self.song_name = song

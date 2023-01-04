@@ -1,5 +1,5 @@
 # Settings
-songs_folder = "./Songs/*.mp3"
+songs_folder = "./songs/*.mp3"
 
 screen_width = 600
 screen_height = 480
